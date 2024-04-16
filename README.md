@@ -70,7 +70,7 @@ jobs:
     steps:
       - name: Deploy to Azure Container Apps
         id: deploy
-        uses: Unique-AG/sdk-deploy-action@v1
+        uses: Unique-AG/sdk-deploy-action@v2
         with:
           module: <your-app-name>
           environment: <your-github-environment-name>
@@ -125,6 +125,12 @@ The action also supports the following optional inputs:
 * `max_replicas`: Maximum number of replicas for the container app. Default: `1`
 * `location`: Location of the Azure Container Apps environment. Default: `switzerlandnorth`
 * `cache_tag`: Tag to use for caching the docker build. Default: `dockercache`
+
+> [!WARNING]
+> There are also two more optional inputs available but they have a cost-aspect and must only be applied after consulting your teams engineer or architect.
+
+* `cpu`: CPUs to allocate for the container app cores from 0.25 - 2.0, e.g. 0.5. Defaults to `0.5`. Only available with `Unique-AG/sdk-deploy-action@v2`.
+* `memory`: Required memory from 0.5 - 4.0, will be converted to *Gi and Gi must not be supplied. Defaults to `1`(Gi). Only available with `Unique-AG/sdk-deploy-action@v2`.
 
 ### Handling the FQDN for Webhooks
 
