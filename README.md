@@ -1,12 +1,14 @@
 # SDK Deployments
 
 ## Table of Contents
+
 1. [Overview](#overview)
 2. [Requirements for Python Projects](#requirements-for-python-projects)
 3. [Managing Environment Variables](#managing-environment-variables)
 4. [GitHub Action Deployment](#github-action-deployment)
 5. [Deployment Environments](#deployment-environments)
 6. [Dockerfile & Scaling](#dockerfile--scaling)
+7. [Debugging the Dockerfile locally][Debugging-the-Dockerfile-locally]
 
 ## 1. Overview
 
@@ -16,7 +18,7 @@ This repository serves as a monorepo for Python applications, each of which can 
 
 For each Python application within this monorepo, the following requirements must be met:
 
-- **Naming Convention:** Use only lowercase letters (a-z) in the project name. Underscores (_) are permitted to enhance readability.
+- **Naming Convention:** Use only lowercase letters (a-z) in the project name. Underscores (\_) are permitted to enhance readability.
 - **App & Module name must match:** The name of the Python module containing the Flask app must match the name of the app.
 - **Poetry Project:** Each app must be a Poetry project, as the deployment relies on a shared Dockerfile that executes the app with Poetry.
 - **Encrypted Environment Variables:** All environment variables must be encrypted and checked into Git as a `.env.enc` file. This file must exist even if it is empty.
@@ -60,8 +62,8 @@ on:
   workflow_dispatch:
 
 permissions:
-      id-token: write
-      contents: read
+  id-token: write
+  contents: read
 
 jobs:
   deployment:
@@ -91,7 +93,6 @@ jobs:
           echo "**Environment:** ${{ steps.deploy.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
           echo "**Resource Group:** ${{ steps.deploy.outputs.resource_group_name }}" >> $GITHUB_STEP_SUMMARY
           echo "**Location:** ${{ steps.deploy.outputs.location }}" >> $GITHUB_STEP_SUMMARY
-          
 ```
 
 3. Ensure you replace the placeholders `<your-app-name>` and `<your-github-environment-name>` with the appropriate values.
@@ -103,34 +104,34 @@ jobs:
 
 ### Full list of available inputs
 
-* `module`: Name of the module to deploy. **(Required)**
-* `environment`: Name of the environment to deploy the module to. **(Required)**
-* `resource_group_name`: Name of the resource group to deploy the module to. **(Required)**
-* `acr_login_server`: Azure Container Registry login server. **(Required)**
-* `azure_client_id`: Azure client ID. **(Required)**
-* `azure_tenant_id`: Azure tenant ID. **(Required)**
-* `azure_subscription_id`: Azure subscription ID. **(Required)**
-* `acr_username`: Azure Container Registry username. **(Required)**
-* `acr_password`: Azure Container Registry password. **(Required)**
-* `age_private_key`: Age private key. **(Required)**
+- `module`: Name of the module to deploy. **(Required)**
+- `environment`: Name of the environment to deploy the module to. **(Required)**
+- `resource_group_name`: Name of the resource group to deploy the module to. **(Required)**
+- `acr_login_server`: Azure Container Registry login server. **(Required)**
+- `azure_client_id`: Azure client ID. **(Required)**
+- `azure_tenant_id`: Azure tenant ID. **(Required)**
+- `azure_subscription_id`: Azure subscription ID. **(Required)**
+- `acr_username`: Azure Container Registry username. **(Required)**
+- `acr_password`: Azure Container Registry password. **(Required)**
+- `age_private_key`: Age private key. **(Required)**
 
 The action also supports the following optional inputs:
 
-* `app_name`: Name of the Flask app (and file). Don't confuse it with the name of the container that is deployed. The container name is automatically defined. Default: `app`
-* `encrypted_env_file`: Name of the encrypted environment file. Default: `.env.enc`
-* `dockerfile`: Dockerfile for the container app. Default: `./Dockerfile`
-* `sops_version`: Version of sops to use. Default: `3.8.1`
-* `poetry_version`: Version of poetry to use. Default: `1.7.1`
-* `min_replicas`: Minimum number of replicas for the container app. Default: `1`
-* `max_replicas`: Maximum number of replicas for the container app. Default: `1`
-* `location`: Location of the Azure Container Apps environment. Default: `switzerlandnorth`
-* `cache_tag`: Tag to use for caching the docker build. Default: `dockercache`
+- `app_name`: Name of the Flask app (and file). Don't confuse it with the name of the container that is deployed. The container name is automatically defined. Default: `app`
+- `encrypted_env_file`: Name of the encrypted environment file. Default: `.env.enc`
+- `dockerfile`: Dockerfile for the container app. Default: `./Dockerfile`
+- `sops_version`: Version of sops to use. Default: `3.8.1`
+- `poetry_version`: Version of poetry to use. Default: `1.7.1`
+- `min_replicas`: Minimum number of replicas for the container app. Default: `1`
+- `max_replicas`: Maximum number of replicas for the container app. Default: `1`
+- `location`: Location of the Azure Container Apps environment. Default: `switzerlandnorth`
+- `cache_tag`: Tag to use for caching the docker build. Default: `dockercache`
 
 > [!WARNING]
 > There are also two more optional inputs available but they have a cost-aspect and must only be applied after consulting your teams engineer or architect.
 
-* `cpu`: CPUs to allocate for the container app cores from 0.25 - 2.0, e.g. 0.5. Defaults to `0.5`. Only available with `Unique-AG/sdk-deploy-action@v2`.
-* `memory`: Required memory from 0.5 - 4.0, will be converted to *Gi and Gi must not be supplied. Defaults to `1`(Gi). Only available with `Unique-AG/sdk-deploy-action@v2`.
+- `cpu`: CPUs to allocate for the container app cores from 0.25 - 2.0, e.g. 0.5. Defaults to `0.5`. Only available with `Unique-AG/sdk-deploy-action@v2`.
+- `memory`: Required memory from 0.5 - 4.0, will be converted to \*Gi and Gi must not be supplied. Defaults to `1`(Gi). Only available with `Unique-AG/sdk-deploy-action@v2`.
 
 ### Handling the FQDN for Webhooks
 
@@ -152,3 +153,40 @@ As we use threads, your code **must be thread-safe!** Failure to ensure thread s
 **This setup allows each app replica to handle 8 concurrent requests.**
 
 To adjust the scaling, you can change the `min_replicas` and `max_replicas` parameters in the GitHub Action. This modification enables the deployment of additional replicas of the app.
+
+## 7. Debugging the Dockerfile locally
+
+It can happen that the build of your docker is not working as intended or running differently on your mac than on a linux machine to test this you can build your docker contianer localy and run it like so:
+
+1. Make sure the follwing files are available
+
+- The Dockerfile.local file in the root directory of your clone.
+
+- The `docker-compose.yaml` file in your directory of your app. Make sure the Module is set to your Module name like for example:
+
+  ```YML
+  version: '3'
+  services:
+    app:
+      build:
+        context: .
+        dockerfile: ../Dockerfile.local
+        args:
+          - MODULE=joke_of_the_day
+      ports:
+        - 5001:8080
+  ```
+
+- Make sure you have right `.env` file configured as the docker will pick that one up and use its values to connect to the environment you wish to test.
+
+2. Run the following command in the directory of your docker-compose.yaml
+
+```
+docker-compose -f docker-compose.yaml  up --build
+```
+
+Now the Docker container is running locally in your Docker and you can look at the logs in your console and you can observe build errors as well as installaion errors or run errors.
+
+Your container is running now under `http://localhost:5001/webhook` (if you follow the examples)
+
+As if you had run your python project with flask locally, but now in a linux build just like the conteiners that would be built run on the container app.
