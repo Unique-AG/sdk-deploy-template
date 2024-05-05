@@ -1,3 +1,7 @@
+#***************************************************************************#
+# THIS FILE IS ONLY FOR LOCAL USE. DO NOT USE IT IN PRODUCTION ENVIRONMENTS #
+#***************************************************************************#
+
 FROM python:3.11-slim-bookworm
 
 ARG MODULE

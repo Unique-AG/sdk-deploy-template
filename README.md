@@ -8,7 +8,7 @@
 4. [GitHub Action Deployment](#github-action-deployment)
 5. [Deployment Environments](#deployment-environments)
 6. [Dockerfile & Scaling](#dockerfile--scaling)
-7. [Debugging the Dockerfile locally][Debugging-the-Dockerfile-locally]
+    1. [Debugging the Dockerfile or Build](#debugging-the-dockerfile-or-build)
 
 ## 1. Overview
 
@@ -154,39 +154,50 @@ As we use threads, your code **must be thread-safe!** Failure to ensure thread s
 
 To adjust the scaling, you can change the `min_replicas` and `max_replicas` parameters in the GitHub Action. This modification enables the deployment of additional replicas of the app.
 
-## 7. Debugging the Dockerfile locally
+## 6.1. Debugging the Dockerfile or Build
 
-It can happen that the build of your docker is not working as intended or running differently on your mac than on a linux machine to test this you can build your docker contianer localy and run it like so:
+To prepare the application code or the docker build for deployment it is recommended to run the docker build locally before each deployment. This can be done by following the steps below.
 
-1. Make sure the follwing files are available
+1. Make sure the following files are available
 
-- The Dockerfile.local file in the root directory of your clone.
+    - The latest `Dockerfile.local` or a `docker-compose.yaml` can always be found in the [template repository](https://github.com/Unique-AG/sdk-deploy-template).
 
-- The `docker-compose.yaml` file in your directory of your app. Make sure the Module is set to your Module name like for example:
+    - The `Dockerfile.local` file in the root directory of the repository.
+      > [!CAUTION]  
+      > Never use this file for deployment. It uses unencrypted secrets and is only suitable for local debugging.
 
-  ```YML
-  version: '3'
-  services:
-    app:
-      build:
-        context: .
-        dockerfile: ../Dockerfile.local
-        args:
-          - MODULE=joke_of_the_day
-      ports:
-        - 5001:8080
-  ```
+    - A `docker-compose.yaml` file in the directory of the app. Make sure the `MODULE` is set to the module name (folder name) like this example:
 
-- Make sure you have right `.env` file configured as the docker will pick that one up and use its values to connect to the environment you wish to test.
+      ```yaml
+      # <app>/docker-compose.yaml
+      version: '3'
+      services:
+        app:
+          build:
+            context: .
+            dockerfile: ../Dockerfile.local
+            args:
+              - MODULE=joke_of_the_day
+          ports:
+            - 5001:8080
+      ```
 
-2. Run the following command in the directory of your docker-compose.yaml
+    - Make sure to have a correct `.env` file configured as the docker will pick that one up and use its values to connect to the environment under test.
 
-```
-docker-compose -f docker-compose.yaml  up --build
-```
+    - One can change the port (left hand side) or modify the environment variables in the `docker-compose.yaml` file to accommodate the needs of the app.
 
-Now the Docker container is running locally in your Docker and you can look at the logs in your console and you can observe build errors as well as installaion errors or run errors.
+2. Run the following command **in the directory of app**:
+    ```bash
+    cd <app>
 
-Your container is running now under `http://localhost:5001/webhook` (if you follow the examples)
+    docker compose up --build
+    
+    # older versions of docker-compose might require the following command
+    docker-compose up --build
+    ```
 
-As if you had run your python project with flask locally, but now in a linux build just like the conteiners that would be built run on the container app.
+3. Now the Docker container is running locally and the logs can be checked in the console. Also build, installation as well as runtime errors will now reveal themselves.
+
+    The container is now running under `http://localhost:5001/webhook` (or whichever port was chosen on the left hand side) as if one had run the python project with flask locally, but now in a docker container just like the ones that would be built run on the deployed container apps.
+
+4. When _done_, press `Ctrl+C` to stop the container.
