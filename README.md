@@ -72,7 +72,7 @@ jobs:
     steps:
       - name: Deploy to Azure Container Apps
         id: deploy
-        uses: Unique-AG/sdk-deploy-action@v2
+        uses: Unique-AG/sdk-deploy-action@v3
         with:
           module: <your-app-name>
           environment: <your-github-environment-name>
@@ -85,6 +85,7 @@ jobs:
           acr_password: ${{ secrets.ACR_PASSWORD }}
           age_private_key: ${{ secrets.AGE_PRIVATE_KEY }}
           encrypted_env_file: .env.enc
+          azure_storage_account_id: ${{ vars.AZURE_STORAGE_ACCOUNT_ID }} # Supported from v3, refer upgrading below
       - name: Create Summary
         run: |
           echo "## Azure Container App ${{ steps.deploy.outputs.app_name }}" >> $GITHUB_STEP_SUMMARY
@@ -102,30 +103,14 @@ jobs:
 7. Select the appropriate workflow and run it to initiate the first deployment.
 8. The FQDN of your deployed app will be visible in the job summary of your GitHub Action workflow.
 
-### Full list of available inputs
+### Upgrading
 
-- `module`: Name of the module to deploy. **(Required)**
-- `environment`: Name of the environment to deploy the module to. **(Required)**
-- `resource_group_name`: Name of the resource group to deploy the module to. **(Required)**
-- `acr_login_server`: Azure Container Registry login server. **(Required)**
-- `azure_client_id`: Azure client ID. **(Required)**
-- `azure_tenant_id`: Azure tenant ID. **(Required)**
-- `azure_subscription_id`: Azure subscription ID. **(Required)**
-- `acr_username`: Azure Container Registry username. **(Required)**
-- `acr_password`: Azure Container Registry password. **(Required)**
-- `age_private_key`: Age private key. **(Required)**
+> [!TIP]
+> Unique occasionally publishes new versions of the `sdk-deploy-action`. To upgrade to the latest version, change the `uses` field in your GitHub Action workflow to `Unique-AG/sdk-deploy-action@<new-version>`. You might want to check the local [CHANGELOG](./CHANGELOG.md) for guidance or the [Actions Changelog itself](https://github.com/Unique-AG/sdk-deploy-action/blob/main/CHANGELOG.md) to learn about the different versions.
 
-The action also supports the following optional inputs:
+### Inputs
 
-- `app_name`: Name of the Flask app (and file). Don't confuse it with the name of the container that is deployed. The container name is automatically defined. Default: `app`
-- `encrypted_env_file`: Name of the encrypted environment file. Default: `.env.enc`
-- `dockerfile`: Dockerfile for the container app. Default: `./Dockerfile`
-- `sops_version`: Version of sops to use. Default: `3.8.1`
-- `poetry_version`: Version of poetry to use. Default: `1.7.1`
-- `min_replicas`: Minimum number of replicas for the container app. Default: `1`
-- `max_replicas`: Maximum number of replicas for the container app. Default: `1`
-- `location`: Location of the Azure Container Apps environment. Default: `switzerlandnorth`
-- `cache_tag`: Tag to use for caching the docker build. Default: `dockercache`
+See the [action documentation](https://github.com/Unique-AG/sdk-deploy-action) for the full list.
 
 > [!WARNING]
 > There are also two more optional inputs available but they have a cost-aspect and must only be applied after consulting your teams engineer or architect.
