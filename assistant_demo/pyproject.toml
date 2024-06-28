@@ -13,6 +13,9 @@ requests = "^2.31.0"
 unique-sdk = "^0.7.0"
 gunicorn = "^21.2.0"
 
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.2.1"
+sseclient = "0.0.27"
 
 [build-system]
 requires = ["poetry-core"]
