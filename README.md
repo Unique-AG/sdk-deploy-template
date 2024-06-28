@@ -66,7 +66,14 @@ permissions:
   contents: read
 
 jobs:
+  warning:
+    if: github.ref != 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - run: You are not allowed to deploy from branches other than main.
+
   deployment:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: <your-github-environment-name>
     steps:
@@ -98,10 +105,11 @@ jobs:
 
 3. Ensure you replace the placeholders `<your-app-name>` and `<your-github-environment-name>` with the appropriate values.
 4. Customize the `with` section of the action to match your project's `sops` and `poetry` versions.
-5. Commit the action to GitHub.
-6. Navigate to the Actions tab in your GitHub repository.
-7. Select the appropriate workflow and run it to initiate the first deployment.
-8. The FQDN of your deployed app will be visible in the job summary of your GitHub Action workflow.
+5. You should keep the `warning` job to prevent deployments from branches other than `main`. Removing this block might result in a violation of the deployment policy.
+6. Commit the action to GitHub.
+7. Navigate to the Actions tab in your GitHub repository.
+8. Select the appropriate workflow and run it to initiate the first deployment.
+9. The FQDN of your deployed app will be visible in the job summary of your GitHub Action workflow.
 
 ### Upgrading
 
