@@ -45,7 +45,7 @@ def _process_event(event_data):
 
     if (
         event
-        and event["event"] == SUBSCRIPTIONS
+        and event["event"] in SUBSCRIPTIONS.split(",")
         and event["payload"]["assistantId"] == os.getenv("ASSISTANT_ID")
     ):
         logger.info(f"Event subscription received: {SUBSCRIPTIONS}")
