@@ -6,6 +6,8 @@ import unique_sdk
 from dotenv import load_dotenv
 from sseclient import SSEClient
 
+# For more details about Event Socket and how to use it, please refer to the following link:
+# https://unique-ch.atlassian.net/wiki/spaces/PUB/pages/631406621/Event+Socket+Streaming+Endpoint+SSE+-+Webhooks+Drop-In
 
 # Module and subscription constants
 MODULE_NAME = "AssistantDemo"
