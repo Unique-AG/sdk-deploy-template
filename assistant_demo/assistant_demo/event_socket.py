@@ -46,7 +46,7 @@ def get_sse_client() -> SSEClient:
 def process_event(event_data) -> None:
     try:
         event = json.loads(event_data)
-        logger.info(f"Event received: {event}")
+        logger.debug(f"Event details: {event}")
     except json.JSONDecodeError as e:
         logger.error(f"JSON decoding error: {e}")
         return
