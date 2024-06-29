@@ -20,25 +20,33 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv("./.env", override=True)
 
-unique_sdk.api_key = os.environ.get("API_KEY")
-unique_sdk.app_id = os.environ.get("APP_ID")
+
+def get_env_val(var_name: str) -> str:
+    val = os.environ.get(var_name)
+    if not val:
+        raise ValueError(f"Env variable {var_name} not set.")
+    return val
 
 
-def _get_sse_client():
-    return SSEClient(
-        url=f'{os.getenv("BASE_URL")}/public/event-socket/events/stream?subscriptions={SUBSCRIPTIONS}',
-        headers={
-            "Authorization": f'Bearer {os.getenv("API_KEY")}',
-            "x-app-id": os.getenv("APP_ID"),
-            "x-company-id": os.getenv("COMPANY_ID"),
-        },
-    )
+# Set SDK configuration
+unique_sdk.api_key = get_env_val("API_KEY")
+unique_sdk.app_id = get_env_val("APP_ID")
 
 
-def _process_event(event_data):
+def get_sse_client() -> SSEClient:
+    url = f'{get_env_val("BASE_URL")}/public/event-socket/events/stream?subscriptions={SUBSCRIPTIONS}'
+    headers = {
+        "Authorization": f'Bearer {get_env_val("API_KEY")}',
+        "x-app-id": get_env_val("APP_ID"),
+        "x-company-id": get_env_val("COMPANY_ID"),
+    }
+    return SSEClient(url=url, headers=headers)
+
+
+def process_event(event_data) -> None:
     try:
         event = json.loads(event_data)
-        print(event)
+        logger.info(f"Event received: {event}")
     except json.JSONDecodeError as e:
         logger.error(f"JSON decoding error: {e}")
         return
@@ -46,30 +54,33 @@ def _process_event(event_data):
     if (
         event
         and event["event"] in SUBSCRIPTIONS.split(",")
-        and event["payload"]["assistantId"] == os.getenv("ASSISTANT_ID")
+        and event["payload"]["assistantId"] == get_env_val("ASSISTANT_ID")
     ):
         logger.info(f"Event subscription received: {SUBSCRIPTIONS}")
 
         # Send a message back to the user
-        unique_sdk.Message.create(
-            user_id=event["userId"],
-            company_id=event["companyId"],
-            chatId=event["payload"]["chatId"],
-            assistantId=os.getenv("ASSISTANT_ID"),
-            text="Hello from the Assistant Demo! 🚀",
-            role="ASSISTANT",
-        )
+        try:
+            unique_sdk.Message.create(
+                user_id=event["userId"],
+                company_id=event["companyId"],
+                chatId=event["payload"]["chatId"],
+                assistantId=get_env_val("ASSISTANT_ID"),
+                text="Hello from the Assistant Demo! 🚀",
+                role="ASSISTANT",
+            )
+        except Exception as e:
+            logger.error(f"Error sending message: {e}")
 
 
-def _event_socket():
-    for event in _get_sse_client():
+def event_socket():
+    for event in get_sse_client():
         logger.debug("New event received.")
         if not event.data:
             logger.warning("Received an empty message.")
             continue
         else:
-            _process_event(event.data)
+            process_event(event.data)
 
 
 if __name__ == "__main__":
-    _event_socket()
+    event_socket()
