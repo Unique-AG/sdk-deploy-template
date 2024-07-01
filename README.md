@@ -194,3 +194,10 @@ To prepare the application code or the docker build for deployment it is recomme
     The container is now running under `http://localhost:5001/webhook` (or whichever port was chosen on the left hand side) as if one had run the python project with flask locally, but now in a docker container just like the ones that would be built run on the deployed container apps.
 
 4. When _done_, press `Ctrl+C` to stop the container.
+
+## 7. Event Socket Streaming Endpoint (SSE) - Webhooks Drop-In
+Some of Unique's FSI clients restrict their developers or staff from installing tunneling tools like ngrok™ to connect locally developed models with the productive Unique FinanceGPT platform. Fully deploying the models via workflows for each development iteration is time-consuming and inconvenient for developers.
+
+The Event Socket serves as a drop-in tool that streams recent events from Unique FinanceGPT, allowing developers to receive events as if they were being called by a webhook. For more details about Event Socket and how to use it, please refer to the following link:
+
+https://unique-ch.atlassian.net/wiki/spaces/PUB/pages/631406621/Event+Socket+Streaming+Endpoint+SSE+-+Webhooks+Drop-In
