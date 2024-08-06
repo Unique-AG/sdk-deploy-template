@@ -1,0 +1,1 @@
+FLASK_APP=assistant_demo/app.py
