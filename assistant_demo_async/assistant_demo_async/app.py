@@ -1,7 +1,7 @@
 import json
 
 from dotenv import load_dotenv
-from flask import Flask, request
+from quart import Quart, request
 from unique_toolkit.app import (
     EventName,
     Event,
@@ -25,13 +25,13 @@ init_logging()
 
 EXTERNAL_MODULE_NAME = "ASYNC_UNIQUE_ASSISTANT_APP"
 
-app = Flask(__name__)
+app = Quart(__name__)
 
 
 @app.route("/webhook", methods=["POST"])
-def webhook():
+async def webhook():
     event = None
-    payload = request.data
+    payload = await request.data
     app.logger.info(f"{EXTERNAL_MODULE_NAME} - received webhook request")
 
     try:
@@ -66,12 +66,12 @@ def webhook():
 
     app.logger.info(f"{EXTERNAL_MODULE_NAME} event received.")
 
-    # Initialize the language model service with the state
+    # Initialize the language model service with the event
     language_model_service = LanguageModelService(event=event)
     language_model = LanguageModel(LanguageModelName.AZURE_GPT_35_TURBO)
 
     # stream the completion to the chat
-    language_model_service.stream_complete(
+    await language_model_service.stream_complete_async(
         messages=LanguageModelMessages(
             [
                 LanguageModelAssistantMessage(

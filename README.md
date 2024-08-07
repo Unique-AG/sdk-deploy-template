@@ -153,7 +153,7 @@ To prepare the application code or the docker build for deployment it is recomme
 
 1. Make sure the following files are available
 
-    - The latest `Dockerfile.local` or a `docker-compose.yaml` can always be found in the [template repository](https://github.com/Unique-AG/sdk-deploy-template).
+    - The latest `Dockerfile.local` (when using async `Dockerfile.async.local`) or a `docker-compose.yaml` can always be found in the [template repository](https://github.com/Unique-AG/sdk-deploy-template).
 
     - The `Dockerfile.local` file in the root directory of the repository.
       > [!CAUTION]  
