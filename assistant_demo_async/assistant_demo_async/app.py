@@ -10,7 +10,6 @@ from unique_toolkit.app import (
     get_endpoint_secret,
     init_sdk,
 )
-from unique_toolkit.chat import ChatState
 from unique_toolkit.language_model import (
     LanguageModelService,
     LanguageModel,
@@ -67,11 +66,8 @@ async def webhook():
 
     app.logger.info(f"{EXTERNAL_MODULE_NAME} event received.")
 
-    # Initialize the state from the event received
-    state = ChatState.from_event(event)
-
-    # Initialize the language model service with the state
-    language_model_service = LanguageModelService(state=state)
+    # Initialize the language model service with the event
+    language_model_service = LanguageModelService(event=event)
     language_model = LanguageModel(LanguageModelName.AZURE_GPT_35_TURBO)
 
     # stream the completion to the chat

@@ -2,7 +2,7 @@
 name = "assistant_demo_async"
 version = "0.1.0"
 description = ""
-authors = ["Konstantin Krauss <konsti@users.noreply.github.com>"]
+authors = ["Martin Fadler <martin.fadler@unique.ch>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

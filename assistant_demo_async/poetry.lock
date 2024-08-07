@@ -961,23 +961,21 @@ name = "unique-toolkit"
 version = "0.5.11"
 description = ""
 optional = false
-python-versions = "^3.11"
-files = []
-develop = false
+python-versions = "<4.0,>=3.11"
+files = [
+    {file = "unique_toolkit-0.5.11-py3-none-any.whl", hash = "sha256:fb23341ccdd3b09f4f08b7e54f87135b026148c0bf1d62276d44e153e4c56f3b"},
+    {file = "unique_toolkit-0.5.11.tar.gz", hash = "sha256:150dea3c55075e721a24d368068893c034ed99e0ad574527d136926dd7a387e7"},
+]
 
 [package.dependencies]
-numpy = "^1.26.4"
-pydantic = "^2.8.2"
-pyhumps = "^3.8.0"
-python-dotenv = "^1.0.1"
-regex = "^2024.5.15"
-tiktoken = "^0.7.0"
-typing-extensions = "^4.9.0"
-unique-sdk = "^0.9.4"
-
-[package.source]
-type = "directory"
-url = "../../ai/unique_toolkit"
+numpy = ">=1.26.4,<2.0.0"
+pydantic = ">=2.8.2,<3.0.0"
+pyhumps = ">=3.8.0,<4.0.0"
+python-dotenv = ">=1.0.1,<2.0.0"
+regex = ">=2024.5.15,<2025.0.0"
+tiktoken = ">=0.7.0,<0.8.0"
+typing-extensions = ">=4.9.0,<5.0.0"
+unique-sdk = ">=0.9.4,<0.10.0"
 
 [[package]]
 name = "urllib3"
@@ -1048,4 +1046,4 @@ h11 = ">=0.9.0,<1"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "bc97dcf0586bcca1870a03c573a6dbeb81ebf4f450086900b4c4d447025af4b9"
+content-hash = "19ef09bf44c96e33c2acfd286242b2721ef3f368ad8229b3be038d28b0da7463"

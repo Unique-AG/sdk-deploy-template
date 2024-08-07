@@ -10,8 +10,9 @@ python = "^3.11"
 flask = "^3.0.2"
 python-dotenv = "^1.0.1"
 requests = "^2.31.0"
-unique-sdk = "^0.7.0"
+unique-sdk = "^0.9.4"
 gunicorn = "^21.2.0"
+unique-toolkit = "^0.5.11"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.1"
