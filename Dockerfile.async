@@ -1,6 +1,6 @@
 FROM python:3.11-slim-bookworm
 
-ARG MODULE
+ARG MODULE=src
 ARG APP_NAME=app
 ARG ENCRYPTED_ENV_FILE=.env.enc
 ARG POETRY_VERSION=1.7.1

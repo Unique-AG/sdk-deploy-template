@@ -4,7 +4,5 @@ services:
     build:
       context: .
       dockerfile: ../Dockerfile.async.local
-      args:
-        - MODULE=assistant_demo_async
     ports:
       - 5001:8080

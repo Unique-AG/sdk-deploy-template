@@ -4,6 +4,7 @@ version = "0.1.0"
 description = ""
 authors = ["Konstantin Krauss <konsti@users.noreply.github.com>"]
 readme = "README.md"
+packages = [{ include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -12,7 +13,7 @@ python-dotenv = "^1.0.1"
 requests = "^2.31.0"
 unique-sdk = "^0.9.4"
 gunicorn = "^21.2.0"
-unique-toolkit = "^0.5.11"
+unique-toolkit = "^0.6.8"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.2.1"
@@ -21,3 +22,6 @@ sseclient = "0.0.27"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "src:app.run"

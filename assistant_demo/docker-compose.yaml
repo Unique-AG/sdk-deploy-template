@@ -4,7 +4,5 @@ services:
     build:
       context: .
       dockerfile: ../Dockerfile.local
-      args:
-        - MODULE=assistant_demo
     ports:
       - 5001:8080

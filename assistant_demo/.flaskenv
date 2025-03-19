@@ -1,1 +1,1 @@
-FLASK_APP=assistant_demo/app.py
+FLASK_APP=src/app.py
